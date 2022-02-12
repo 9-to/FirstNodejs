@@ -1,7 +1,8 @@
 const http = require('http');
 const fs = require('fs');
 const ejs = require('ejs');
-const url = require('url');
+const URL = require('url').URL;
+const qs = require('querystring');
 
 const index_page = fs.readFileSync('./node-app01/index.ejs', 'utf8');
 const other_page = fs.readFileSync('./node-app01/other.ejs', 'utf8');
@@ -15,25 +16,16 @@ console.log('Server running at http://localhost:3000/');
 //=======
 
 function getFromClient(rq,rs){
-    var url_parts = url.parse(rq.url);
+    var base_url = 'http://' + rq.headers.host + '/';
+    var url_parts = new URL(rq.url,base_url);
+    console.log(url_parts);
     switch(url_parts.pathname){
         case '/':
-            var content = ejs.render(index_page,{
-                title:"Index!!",
-                content:"これはIndexページ",
-            });
-            rs.writeHead(200,{'Content-Type': 'text/html'});
-            rs.write(content);
-            rs.end();
+            var param = url_parts.searchParams;
+            responseIndex(rq,rs,param)
             break;
         case '/other':
-            var content = ejs.render(other_page,{
-                title:"Other",
-                content:"これはOtherページ",
-            });
-            rs.writeHead(200,{'Content-Type': 'text/html'});
-            rs.write(content);
-            rs.end();
+            responseOther(rq,rs);
             break;
         case '/style.css':
             rs.writeHead(200,{'Content-Type': 'text/css'});
@@ -47,9 +39,46 @@ function getFromClient(rq,rs){
     }
 }
 
-function writeToResponse(err,data){
-    var content = data.replace(/dummy_title/g, 'タイトル').replace(/dummy_content/g, 'コンテンツ');
+function responseIndex(rq,rs,param){
+    var msg = "これはIndexページ。";
+    if(param.has('msg')){
+        msg += 'あなたは' + param.get('msg') + 'と送りました';
+    }
+    var content = ejs.render(index_page,{
+        title: "Index!!",
+        content: msg,
+    });
     rs.writeHead(200,{'Content-Type': 'text/html'});
     rs.write(content);
     rs.end();
+}
+
+function responseOther(rq,rs){
+    var msg = "これはOtherページ。";
+    if(rq.method == 'POST'){
+        var body = '';
+        rq.on('data',(data)=>{
+            body += data;
+        });
+        rq.on('end',()=>{
+            var post_data = qs.parse(body);
+            msg += 'あなたは、' + post_data.msg + 'とpostしました。';
+            var content = ejs.render(other_page,{
+                title: "Other",
+                content: msg,
+            });
+            rs.writeHead(200,{'Content-Type': 'text/html'});
+            rs.write(content);
+            rs.end();
+        });
+    }else{
+        var msg = "ページがありません。";
+        var content = ejs.render(other_page,{
+            title: "Other",
+            content: msg,
+        });
+        rs.writeHead(200,{'Content-Type': 'text/html'});
+        rs.write(content);
+        rs.end();
+    }
 }
