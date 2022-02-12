@@ -18,6 +18,18 @@
                 <input type="submit" value="Click">
             </p>
         </form>
+        <p>
+            <table style="width: 400px;">
+                <tr><th>伝言です</th></tr>
+                <tr><td><%=data.msg2 %></td></tr>
+            </table>
+        </p>
+        <p>your last message:<%=cookie_data %></p>
+        <form method="post" action="/">
+        <p>
+            MESSAGE <input type="text" name="msg2">
+            <input type="submit" value="送信">
+        </p>
     </main>
 </body>
 </html>
