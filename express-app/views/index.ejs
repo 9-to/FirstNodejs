@@ -12,7 +12,11 @@
     </head>
     <main>
         <p><%-content %></p>
-        <p><a href="<%=link.href %>"><%=link.text %></a></p>
+        <p><table style="width: 85%;">
+            <% for(var key in data) { %>
+                <%-include('data_item',{key:key,val:data[key]}) %>
+            <% } %>
+        </table></p>
     </main>
 </body>
 </html>

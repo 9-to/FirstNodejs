@@ -13,4 +13,21 @@ Node.js超入門第2版を参考に勉強しています。
 
 ### Chap.4
 
-アプリケーションフレームワーク**Express**
++ アプリケーションフレームワーク**Express**
++ Express-generatorの使い方
+
+`express -e hogehoge`
+
+でプロジェクトを生成できる。
+
+`npm install`
+
+で必要なパッケージをインストールできる。
+
+`npm start`
+
+で実行できる。
+
+### Chap.5
+
++ Expressのアプリ間での値のやり取りについて
