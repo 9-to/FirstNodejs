@@ -4,14 +4,31 @@
     <meta http-equiv="content-type"
         content="text/html; charset=UTF-8">
     <title><%=title %></title>
-    <link type="text/css" href="/sthylesheets/style.css" rel="stylesheet">
+    <script src="/javascripts/jquery.min.js"></script>
+    <link type="text/css" href="/stylesheets/style.css" rel="stylesheet">
+    <script>
+        $(document).ready(function(){
+            $('#btn').click(function(){
+                var n = $('#num').val();
+                $.getJSON("/ajax?id=" + n, function(json){
+                    var msg = '<table><tr><th>名前</th><td>' +
+                        json.name + '</td></tr><tr><th>年齢</th><td>' + 
+                        json.age + '</td></tr><tr><th>メール</th><td>' +
+                        json.mail + '</td></tr></table>';
+                    $('#msg').html(msg);
+                });
+            });
+        });
+    </script>
 </head>
 <body>
     <head>
         <h1><%=title %></h1>
     </head>
     <main>
-        <p><%-content %></p>
+        <p id="msg"><%-content %></p>
+        <input type="text" name="num" id="num">
+        <input type="button" id="btn" value="GET">
     </main>
 </body>
 </html>

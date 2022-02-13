@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta http-equiv="content-type"
+        content="text/html; charset=UTF-8">
+    <title><%=title %></title>
+    <link type="text/css" href="/stylesheets/style.css" rel="stylesheet">
+</head>
+<body>
+    <head>
+        <h1><%=title %></h1>
+    </head>
+    <main>
+        <table>
+            <% for(var i in content) { %>
+                <tr>
+                    <% var obj = content[i]; %>
+                    <th><%=obj.id%></th>
+                    <th><%=obj.name%></th>
+                    <th><%=obj.mail%></th>
+                    <th><%=obj.age%></th>
+                </tr>
+            <% } %>
+        </table>
+    </main>
+</body>
+</html>

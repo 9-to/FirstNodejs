@@ -31,3 +31,19 @@ Node.js超入門第2版を参考に勉強しています。
 ### Chap.5
 
 + Expressのアプリ間での値のやり取りについて
+    + セッション
+        `npm install --save express-session`
++ サーバからのデータ取得
+    + Ajax
+        + jacaScriptを用いてサーバに非同期的にアクセスして必要なデータを取り出す技術
++ DBを使う
+    + XAMPP
+        + MariaDB
+    + CRUD
+    (SQL構文を覚えていれば全然問題ない)
+
+### Chap.6
+
++ バリデーション
+
+### Chap.7
