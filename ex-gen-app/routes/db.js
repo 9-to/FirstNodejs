@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-
+var { check, validationResult } = require('express-validator');
 //var http = require('https');
 //var parseString = require('xml2js').parseString;
 var mysql = require('mysql');
@@ -11,6 +11,12 @@ var mysql_setting = {
     password: '',
     database: 'my-nodeapp-db00',
 };
+
+function vCheck(){
+    return [check('name','NAMEは必須項目です').notEmpty(),
+    check('mail','MAILはメールアドレスを入力してください').isEmail(),
+    check('age','AGEは整数です').isInt()]
+}
 
 router.get('/',(rq,rs,next)=>{
     var connection = mysql.createConnection(mysql_setting);
@@ -28,25 +34,41 @@ router.get('/add',(rq,rs,next)=>{
     var data = {
         title: 'DB/Add',
         content: '新しいレコードを入力',
+        form: {name:'', mail:'', age:0}
     };
     rs.render('db/add',data);
 });
 
-router.post('/add',(rq,rs,next)=>{
-    var nm = rq.body.name;
-    var ml = rq.body.mail;
-    var ag = rq.body.age;
-    var data = {
-        'name': nm,
-        'mail': ml,
-        'age':  ag,
-    };
-    var connection = mysql.createConnection(mysql_setting);
-    connection.connect();
-    connection.query('INSERT into mydata set ?',data, function(err, results, fields){
-        rs.redirect('/db');
-    });
-    connection.end();
+router.post('/add',vCheck(),(rq,rs,next)=>{
+    var err = validationResult(rq);
+    if(!err.isEmpty()){
+        var re = '<ul class="error">';
+        var result_arr = err.array();
+        for(var n in result_arr){
+            re += '<li>' + result_arr[n].msg + '</li><br>'
+        }
+        re += '</ul>'
+        var data = {title:'DB/Add',
+                    content: re,
+                    form:rq.body,
+        };
+        rs.render('db/add',data);
+    }else{
+        var nm = rq.body.name;
+        var ml = rq.body.mail;
+        var ag = rq.body.age;
+        var data = {
+            'name': nm,
+            'mail': ml,
+            'age':  ag,
+        };
+        var connection = mysql.createConnection(mysql_setting);
+        connection.connect();
+        connection.query('INSERT into mydata set ?',data, function(err, results, fields){
+            rs.redirect('/db');
+        });
+        connection.end();
+    }
 });
 
 router.get('/read',(rq,rs,next)=>{
